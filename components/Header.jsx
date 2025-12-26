@@ -74,7 +74,7 @@ export default function Header() {
             <div ref={topBarLeftRef} className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
               <a href="tel:+1234567890" className="flex items-center gap-2 hover:underline transition">
                 <HiPhone className="w-5 h-5" />
-                <span>+1 (234) 567-890</span>
+                <span>+971503370345</span>
               </a>
               <a href="mailto:info@royaltravelers.com" className="flex items-center gap-2 hover:underline transition">
                 <HiMail className="w-5 h-5" />
