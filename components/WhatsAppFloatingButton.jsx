@@ -7,7 +7,7 @@ import { FaWhatsapp } from 'react-icons/fa';
 export default function WhatsAppFloatingButton() {
   // IMPORTANT: International format, NO +, NO spaces, NO 00
   // For Pakistan: 92 + 3022187590 → 923022187590
-  const phoneNumber = '9203022187590'; // ← your corrected number
+  const phoneNumber = '971503370345'; // ← your corrected number
 
   const message = "Hi Royal Challengers Tours! I'm interested in booking a tour in Dubai...";
 
