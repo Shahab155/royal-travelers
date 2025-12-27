@@ -1,34 +1,10 @@
-// components/home/FAQSection.jsx
 'use client';
-import { useRef, useState } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-gsap.registerPlugin(ScrollTrigger);
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 
 export default function FAQSection() {
-  const containerRef = useRef(null);
   const [openIndex, setOpenIndex] = useState(null);
-
-  useGSAP(() => {
-    // Entrance animation for FAQ items
-    gsap.fromTo(
-      containerRef.current.querySelectorAll('.faq-item'),
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        stagger: 0.15,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-      }
-    );
-  }, { scope: containerRef });
 
   const faqs = [
     {
@@ -61,25 +37,54 @@ export default function FAQSection() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { staggerChildren: 0.15 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.4 } },
+  };
+
   return (
     <section className="py-16 lg:py-24 bg-[var(--color-bg)]">
       <div className="max-w-5xl mx-auto px-5 sm:px-6 lg:px-8">
+
         {/* Section Header */}
-        <div className="text-center mb-12 lg:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center mb-12 lg:mb-16"
+        >
           <h2 className="text-4xl md:text-5xl font-bold font-heading text-[var(--color-text)] mb-5">
             Frequently Asked Questions
           </h2>
           <p className="text-lg md:text-xl text-[var(--color-text-secondary)] max-w-3xl mx-auto leading-relaxed">
             Quick answers to the most common questions from our international travelers
           </p>
-        </div>
+        </motion.div>
 
         {/* FAQ Accordion */}
-        <div ref={containerRef} className="space-y-5">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false, margin: "-100px" }}
+          variants={containerVariants}
+          className="space-y-5"
+        >
           {faqs.map((faq, index) => (
-            <div
+            <motion.div
               key={index}
-              className={`faq-item card  overflow-hidden transition-all duration-500 ${
+              variants={itemVariants}
+              className={`faq-item card overflow-hidden transition-all duration-500 ${
                 openIndex === index
                   ? 'shadow-xl border border-primary-500'
                   : 'hover:shadow-lg border-[var(--color-border)]'
@@ -93,8 +98,6 @@ export default function FAQSection() {
                 <span className="text-lg md:text-xl font-medium text-[var(--color-text)] group-hover:text-primary-500 transition-colors">
                   {faq.question}
                 </span>
-
-                {/* Plus/Minus Icon with rotation */}
                 <span
                   className={`text-2xl font-bold text-primary-500 transition-transform duration-500 ${
                     openIndex === index ? 'rotate-180' : ''
@@ -104,32 +107,46 @@ export default function FAQSection() {
                 </span>
               </button>
 
-              {/* Answer Content */}
-              <div
-                className={`px-6 overflow-hidden transition-all duration-500 ease-in-out ${
-                  openIndex === index ? 'max-h-96 py-6 opacity-100' : 'max-h-0 py-0 opacity-0'
-                }`}
-              >
-                <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                  {faq.answer}
-                </p>
-              </div>
-            </div>
+              {/* Answer Content with AnimatePresence */}
+              <AnimatePresence initial={false}>
+                {openIndex === index && (
+                  <motion.div
+                    key="content"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    className="px-6 overflow-hidden py-6"
+                  >
+                    <p className="text-[var(--color-text-secondary)] leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Final Call to Action */}
-        <div className="text-center mt-12 lg:mt-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="text-center mt-12 lg:mt-16"
+        >
           <p className="text-lg text-[var(--color-text-secondary)] mb-6">
             Still have questions? We’re here to help.
           </p>
-          <a
+          <Link
             href="/contact"
             className="btn-outline inline-flex px-10 py-5 text-lg font-semibold"
           >
             Contact Us Now
-          </a>
-        </div>
+          </Link>
+        </motion.div>
+
       </div>
     </section>
   );

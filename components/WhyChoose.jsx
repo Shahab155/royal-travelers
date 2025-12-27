@@ -1,11 +1,8 @@
 'use client';
 
-import { useRef } from 'react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from 'framer-motion';
 
-gsap.registerPlugin(ScrollTrigger);
+/* ================= DATA ================= */
 
 const features = [
   {
@@ -46,122 +43,126 @@ const features = [
   }
 ];
 
+/* ================= ANIMATION VARIANTS ================= */
+
+const containerVariants = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 80,
+    rotateX: 10,
+    scale: 0.94,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 120,
+      damping: 22,
+      mass: 0.9,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -60,
+    rotateX: -8,
+    scale: 0.92,
+    transition: {
+      duration: 0.45,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+};
+
+/* ================= COMPONENT ================= */
+
 export default function WhyChooseUs() {
-  const containerRef = useRef(null);
-  const headerRef = useRef(null);
-  const cardsContainerRef = useRef(null);
-
-  useGSAP(() => {
-    // 1. Header Animation (Fade Up)
-    gsap.fromTo(
-      headerRef.current,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 75%',
-        },
-      }
-    );
-
-    // 2. Cards Stagger Animation
-    const cards = gsap.utils.toArray('.glass-card');
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 60 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-        stagger: 0.15,
-        scrollTrigger: {
-          trigger: cardsContainerRef.current,
-          start: 'top 80%',
-        },
-      }
-    );
-  }, { scope: containerRef });
-
   return (
-    <section 
-      ref={containerRef} 
-      className="relative py-20 overflow-hidden flex items-center justify-center min-h-screen"
+    <motion.section
+      className="relative py-24 min-h-screen flex items-center overflow-hidden"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: false, margin: "-120px" }}
+      variants={containerVariants}
     >
-      
-      {/* === BACKGROUND LAYERS === */}
-      
-      {/* 1. Full Screen Image */}
-      <div className="absolute inset-0 z-0">
+      {/* BACKGROUND */}
+      <div className="absolute inset-0">
         <img
           src="/why.jpg"
-          alt="Luxury Desert Safari Land Cruiser"
-          fill
-          className="object-cover object-center w-full h-full"
-          priority
+          alt="Luxury Desert Safari"
+          className="w-full h-full object-cover"
         />
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900/30 to-transparent" />
       </div>
 
-      {/* 2. Dark Overlay (Crucial for text readability) */}
-      <div className="absolute inset-0 bg-black/60 z-10"></div>
+      {/* CONTENT */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 w-full">
 
-      {/* 3. Gradient Accent (Subtle shine from top left) */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary-900/30 to-transparent z-10 pointer-events-none"></div>
-
-
-      {/* === CONTENT === */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        
-        {/* Section Header */}
-        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16">
-          
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold font-heading text-white mb-6 leading-tight">
+        {/* HEADER */}
+        <motion.div
+          variants={cardVariants}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
             The Royal Challengers <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-200 to-white">
               Difference
             </span>
           </h2>
-          <p className="text-lg text-gray-300 leading-relaxed">
-            We don't just offer tours; we craft experiences. From the moment you book until you return home, we are your trusted partner in adventure.
+          <p className="text-lg text-gray-300">
+            We don't just offer tours; we craft unforgettable experiences.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Feature Cards Grid (Glassmorphism) */}
-        <div 
-          ref={cardsContainerRef}
+        {/* CARDS */}
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
+          variants={containerVariants}
         >
-          {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className="glass-card group relative p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/15 transition-all duration-300 hover:-translate-y-1"
+          {features.map((f, i) => (
+            <motion.div
+              key={i}
+              variants={cardVariants}
+              whileHover={{
+                y: -10,
+                rotateX: -3,
+                scale: 1.03,
+                transition: { duration: 0.35, ease: "easeOut" },
+              }}
+              style={{ perspective: 1200 }}
+              className="group p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 hover:bg-white/15 transition-all duration-300 will-change-transform"
             >
-              <div className="flex items-start gap-6">
-                
-                {/* Icon Circle */}
-                <div className="w-16 h-16 rounded-full bg-primary-600/20 flex items-center justify-center text-primary-400 flex-shrink-0 group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300">
-                  {feature.icon}
+              <div className="flex gap-6">
+                <div className="w-16 h-16 rounded-full bg-primary-600/20 flex items-center justify-center text-primary-400 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300">
+                  {f.icon}
                 </div>
-
-                {/* Text Content */}
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-3">
-                    {feature.title}
+                    {f.title}
                   </h3>
                   <p className="text-gray-300 leading-relaxed">
-                    {feature.desc}
+                    {f.desc}
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
       </div>
-    </section>
+    </motion.section>
   );
 }
