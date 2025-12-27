@@ -1,4 +1,3 @@
-"use client";
 import ContactSection from "@/components/ContactForm";
 import FAQSection from "@/components/FAQSection";
 import FeaturedPackages from "@/components/FeaturedPakages";
